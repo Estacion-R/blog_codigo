@@ -423,4 +423,4 @@ También queda para seguir sumando la distribución de los inmuebles propios o a
 
 ## El Código.
 
-Accedé al script desde donde vas a poder replicar el código en tu computadora sin restricción: [click acá]()
+Accedé al script desde donde vas a poder replicar el código en tu computadora sin restricción: [click acá](https://github.com/Estacion-R/blog_codigo/blob/main/2022/Todos-los-caminos-conducen-a-microcentro.R)
