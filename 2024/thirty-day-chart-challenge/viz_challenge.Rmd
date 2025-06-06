@@ -1,0 +1,80 @@
+---
+  title: Thirty Day Chart Challenge
+author: Pablo Tiscornia
+date: '2024-04-04'
+output: 
+  html_document:
+    self_contained: true
+slug: thirty-day-chart-challenge
+categories:
+  - rstats
+  - dataviz
+  - cienciadedatos
+tags:
+  - dataviz
+  - ggplot2
+  - highcharter
+  - plotly
+  - rstat
+toc: no
+images: ~
+---
+
+
+
+
+```{r echo=FALSE}
+#.......................Configuración .Rmd.......................
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, echo = FALSE)
+options(scipen = 999)
+```
+
+![](https://github.com/30DayChartChallenge/Edition2024/raw/main/img/prompts.png)
+
+<br>
+
+## Día 4 - Waffle
+
+```{r day04, child='days/day04-waffle.Rmd', eval=TRUE}
+```
+
+#### Recursos utilizados:
+
+- Referencia para crear el gráfico con `{highcharter}`: [LINK](https://jkunst.com/highcharter/articles/fontawesome.html?q=waffle#another-example) 
+
+- Autor: [Joshua Kunst](https://jkunst.com/)
+
+- Paleta de colores generada en [colorbrewer2.org](https://colorbrewer2.org/#type=qualitative&scheme=Set2&n=6)
+
+- Código: [LINK](https://github.com/pablotis/estacion-r.github.io/tree/main/R/CODE_30DayChallenge_day-4.R)
+
+
+<br>
+
+## Día 10 - Físico
+
+```{r day10, child='days/day10-physical.Rmd', eval=TRUE}
+```
+
+<br>
+
+## Día 15 - Historical
+
+```{r day15, child='days/day15-historical.Rmd', eval=TRUE}
+```
+
+#### Recursos utilizados:
+
+- Código: [LINK](https://github.com/pablotis/estacion-r.github.io/tree/main/R/CODE_30DayChallenge_day-15.R)
+
+- Fuente: INDEC. 
+
+    - [LINK](https://www.indec.gob.ar/uploads/informesdeprensa/capacidad_03_24EA7D6E7000.pdf) al informe 
+    
+    - [LINK](https://www.indec.gob.ar/ftp/cuadros/economia/sh_capacidad_03_24.xls a los datos
+
+
+<br>
+
+
+

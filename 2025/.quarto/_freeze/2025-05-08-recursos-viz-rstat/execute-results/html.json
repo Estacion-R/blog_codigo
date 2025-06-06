@@ -1,0 +1,15 @@
+{
+  "hash": "ba2342bd5370281cd5d0090b997dd1f0",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: Recursos indispensables para Visualizar con R\nauthor: Estación R\ndate: '2025-05-08'\nslug: 2025-05-08-recursos-viz-rstat\nformat:\n  html:\n    embed-resources: true\n\n---\n\n::: {.cell layout-align=\"center\"}\n\n:::\n\n\n\n## TEsting the brand\n\nThis is just some text\n\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\n# Some code\n\ntest = 2 + 2\n```\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

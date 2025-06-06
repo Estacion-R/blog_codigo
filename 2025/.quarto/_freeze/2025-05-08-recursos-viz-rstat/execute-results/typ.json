@@ -1,0 +1,15 @@
+{
+  "hash": "8ffd7d8a641c49e9823049c045f39ff3",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: Recursos indispensables para Visualizar con R\nauthor: Estación R\ndate: '2025-05-08'\nformat:\n  typst:\n    brand-mode: dark\n#brand: _brand.yml\nbrand:\n  light:\n    color:\n      background: \"#ffffff\"\n      foreground: \"#333333\"\n  dark:\n    color:\n      background: \"#333333\"\n      foreground: \"#ffffff\"\nslug: 2025-05-08-recursos-viz-rstat\n---\n\n::: {.cell layout-align=\"center\"}\n\n:::\n\n\n\n## TEsting the brand\n\nThis is just some text\n\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\n# Some code\n\ntest = 2 + 2\n```\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": null,
+    "postProcess": false
+  }
+}

@@ -1,0 +1,947 @@
+---
+title: Recursos Indispensables para Visualizar Datos con R - Capítulo II
+author: Estación R
+date: '2025-05-28'
+description: Capítulo II de una serie de artículos sobre recursos para ayudar a tu inspiración y mejorar tus habilidades de visualización con R
+slug: 2025-05-08-recursos-viz-rstat-cap_2
+format:
+  html:
+    embed-resources: true
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    code-tools: true
+    theme: 
+      - cosmo
+      - custom.scss
+    mainfont: Ubuntu
+    fontsize: 16px
+    linestretch: 1.6
+execute:
+  warning: false
+  message: false
+---
+
+```{css}
+/*| echo: false */
+
+/* Estilo personalizado para Estación R */
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+
+:root {
+  --estacion-primary: #2E86AB;
+  --estacion-secondary: #A23B72;
+  --estacion-accent: #F18F01;
+  --estacion-success: #C73E1D;
+  --estacion-dark: #1B263B;
+  --estacion-light: #F8F9FA;
+  --estacion-code: #E9ECEF;
+}
+
+body {
+  font-family: 'Ubuntu', sans-serif;
+  color: var(--estacion-dark);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 500;
+  color: var(--estacion-primary);
+}
+
+h1 {
+  border-bottom: 3px solid var(--estacion-accent);
+  padding-bottom: 0.5rem;
+}
+
+h2 {
+  border-left: 4px solid var(--estacion-secondary);
+  padding-left: 1rem;
+  margin-top: 2rem;
+}
+
+h3 {
+  color: var(--estacion-secondary);
+  font-weight: 500;
+}
+
+.callout-tip {
+  border-left: 4px solid var(--estacion-accent);
+  background-color: rgba(241, 143, 1, 0.1);
+}
+
+.callout-tip .callout-title {
+  color: var(--estacion-accent);
+  font-weight: 600;
+}
+
+code {
+  background-color: var(--estacion-code);
+  color: var(--estacion-dark);
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+}
+
+pre {
+  background-color: var(--estacion-code);
+  border: 1px solid #DEE2E6;
+  border-radius: 0.5rem;
+}
+
+a {
+  color: var(--estacion-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--estacion-secondary);
+  text-decoration: underline;
+}
+
+.quarto-title-banner {
+  background: linear-gradient(135deg, var(--estacion-primary) 0%, var(--estacion-secondary) 100%);
+  color: white;
+}
+
+blockquote {
+  border-left: 4px solid var(--estacion-accent);
+  background-color: rgba(241, 143, 1, 0.05);
+  padding: 1rem;
+  margin: 1rem 0;
+}
+```
+
+## Introducción
+
+Si estás dando tus primeros pasos en [R](https://www.r-project.org/), es probable que ya hayas oído hablar de la importancia de la **visualización de datos**. Representar información de manera gráfica no solo permite comunicar mejor, sino que también ayuda a descubrir patrones, validar hipótesis y tomar decisiones basadas en evidencia.
+
+Pero, ¿es R un buen lenguaje para hacer gráficos? La respuesta es un rotundo **sí**. R nació como un lenguaje estadístico, y desde sus inicios ha puesto un fuerte foco en la visualización. De hecho, incluso las versiones más antiguas del lenguaje ya incluían funciones básicas para graficar. Con el tiempo, y gracias a la comunidad, se desarrollaron herramientas como `ggplot2` que revolucionaron la forma de crear gráficos, permitiendo controlar cada detalle de manera declarativa, estructurada y con alta calidad visual.
+
+Hoy en día, R es una de las herramientas preferidas para la visualización de datos en el ámbito académico, científico y profesional como así también en el sector privado. Su ecosistema permite generar desde gráficos simples hasta visualizaciones interactivas, mapas dinámicos y dashboards web.
+
+## Visualización de datos con R: Capítulo II - El universo de paquetes para crear gráficos increíbles
+
+[En el capítulo anterior](https://estacion-r.com/blog/87ed9382-b6cf-4091-987e-79acf17b5c49/rstats%20viz%20visualizacion%20datos%20ggplot2%20dat) exploramos los recursos fundamentales creados por expertos para comenzar con visualización de datos en R. Ahora es momento de dar el siguiente paso: descubrir el **ecosistema de paquetes** que pueden llevar tus visualizaciones al siguiente nivel.
+
+[R](https://www.r-project.org/) tiene una comunidad increíblemente activa que ha desarrollado cientos de paquetes especializados en visualización. Algunos extienden las capacidades de `{ggplot2}`, otros ofrecen enfoques completamente diferentes, y muchos están diseñados para crear gráficos interactivos modernos. La buena noticia es que no necesitás conocerlos todos para crear visualizaciones impactantes.
+
+```{r setup}
+#| include: false
+# Cargar librerías necesarias
+library(ggplot2)
+library(dplyr)
+
+# Crear datos de ejemplo
+set.seed(123)
+datos_ejemplo <- data.frame(
+  x = rnorm(100),
+  y = rnorm(100),
+  grupo = sample(c("A", "B", "C"), 100, replace = TRUE),
+  categoria = sample(c("Tipo1", "Tipo2", "Tipo3"), 100, replace = TRUE),
+  valor = runif(100, 10, 100),
+  fecha = seq(as.Date("2020-01-01"), by = "month", length.out = 100)
+)
+
+# Datos para series de tiempo
+datos_tiempo <- data.frame(
+  fecha = seq(as.Date("2020-01-01"), by = "day", length.out = 365),
+  valor = cumsum(rnorm(365, 0, 1)) + 100
+)
+
+# Datos para mapas (coordenadas de ciudades mexicanas)
+ciudades_mx <- data.frame(
+  ciudad = c("Ciudad de México", "Guadalajara", "Monterrey", "Puebla", "Tijuana"),
+  lat = c(19.4326, 20.6597, 25.6866, 19.0414, 32.5149),
+  lng = c(-99.1332, -103.3496, -100.3161, -98.2063, -117.0382),
+  poblacion = c(9209944, 1460148, 1135512, 1576259, 1810645)
+)
+```
+
+## Extendiendo ggplot2: cuando lo bueno se vuelve extraordinario
+
+### ggplot2 con superpoderes
+
+Aunque ggplot2 es poderoso por sí solo, estos paquetes lo potencian aún más:
+
+### ggthemes
+Colección de temas y escalas inspirados en publicaciones famosas como The Economist, Wall Street Journal y FiveThirtyEight. Perfecto para darle a tus gráficos un look profesional instantáneo.
+
+**📚 Documentación oficial:** [https://jrnold.github.io/ggthemes/](https://jrnold.github.io/ggthemes/)
+
+```{r ggthemes-ejemplo}
+library(ggthemes)
+
+ggplot(datos_ejemplo, aes(x = x, y = y, color = grupo)) + 
+  geom_point(size = 3) + 
+  theme_economist() +
+  scale_color_economist() +
+  labs(title = "Estilo The Economist",
+       subtitle = "Gráfico profesional con ggthemes")
+```
+
+::: {.callout-tip}
+## Tip profesional
+Usá `theme_economist()` junto con `scale_color_economist()` para mantener consistencia completa en el estilo. También podés probar `theme_fivethirtyeight()` para un look más moderno y limpio.
+:::
+
+### patchwork
+Facilita la combinación de múltiples gráficos de ggplot2 en composiciones complejas. Olvidate de los layouts complicados: con patchwork podés crear paneles de gráficos usando operadores simples como + y /.
+
+**📚 Documentación oficial:** [https://patchwork.data-imaginist.com/](https://patchwork.data-imaginist.com/)
+
+```{r patchwork-ejemplo}
+library(patchwork)
+
+# Crear tres gráficos individuales
+p1 <- ggplot(datos_ejemplo, aes(x = x, y = y)) + 
+  geom_point() + 
+  labs(title = "Gráfico 1")
+
+p2 <- ggplot(datos_ejemplo, aes(x = grupo, y = valor)) + 
+  geom_boxplot() + 
+  labs(title = "Gráfico 2")
+
+p3 <- ggplot(datos_ejemplo, aes(x = grupo, fill = categoria)) + 
+  geom_bar() + 
+  labs(title = "Gráfico 3")
+
+# Combinar con patchwork
+p1 + p2 + p3
+```
+
+::: {.callout-tip}
+## Tip de layout
+Usá `|` para apilar horizontalmente y `/` para apilar verticalmente. Por ejemplo: `(p1 | p2) / p3` coloca p1 y p2 arriba, y p3 abajo ocupando todo el ancho.
+:::
+
+### ggrepel
+Resolvé el problema eterno de las etiquetas superpuestas. Automáticamente repele las etiquetas de texto y puntos para evitar solapamientos, manteniendo la legibilidad sin sacrificar información.
+
+**📚 Documentación oficial:** [https://ggrepel.slowkow.com/](https://ggrepel.slowkow.com/)
+
+```{r ggrepel-ejemplo}
+library(ggrepel)
+
+# Datos para etiquetas
+datos_etiquetas <- datos_ejemplo[sample(nrow(datos_ejemplo), 15), ]
+datos_etiquetas$etiqueta <- paste("Punto", 1:15)
+
+ggplot(datos_etiquetas, aes(x = x, y = y, label = etiqueta, color = grupo)) + 
+  geom_point(size = 3) + 
+  geom_text_repel() +
+  theme_minimal() +
+  labs(title = "Etiquetas sin superposición con ggrepel")
+```
+
+::: {.callout-tip}
+## Tip de legibilidad
+Usá `max.overlaps = Inf` para mostrar todas las etiquetas, y ajustá `box.padding` para controlar el espacio alrededor de cada etiqueta. Para etiquetas más llamativas, probá `geom_label_repel()` en lugar de `geom_text_repel()`.
+:::
+
+### Gráficos especializados que impresionan
+
+### ggridges
+Especializado en gráficos de densidad tipo "ridgeline" que muestran distribuciones múltiples de forma elegante. Ideal para comparar distribuciones de diferentes grupos o categorías de manera visualmente impactante.
+
+**📚 Documentación oficial:** [https://wilkelab.org/ggridges/](https://wilkelab.org/ggridges/)
+
+```{r ggridges-ejemplo}
+library(ggridges)
+
+# Generar datos con diferentes distribuciones por grupo
+datos_ridges <- data.frame(
+  grupo = rep(c("Grupo A", "Grupo B", "Grupo C", "Grupo D"), each = 200),
+  valor = c(rnorm(200, 0, 1), rnorm(200, 2, 1.5), 
+            rnorm(200, -1, 0.8), rnorm(200, 3, 2))
+)
+
+ggplot(datos_ridges, aes(x = valor, y = grupo, fill = grupo)) + 
+  geom_density_ridges(alpha = 0.7) +
+  theme_ridges() +
+  scale_fill_viridis_d() +
+  labs(title = "Distribuciones por grupo con ggridges",
+       x = "Valor", y = "Grupo")
+```
+
+::: {.callout-tip}
+## Tip visual
+Experimentá con `rel_min_height` para filtrar las colas de las distribuciones y enfocarte en las áreas principales. Usá `scale = 0.9` para evitar que las distribuciones se toquen entre sí.
+:::
+
+### waffle
+Crea gráficos de cuadrados (waffle charts) que son perfectos para mostrar proporciones y partes de un todo. Una alternativa moderna y llamativa a los típicos gráficos de pie.
+
+**📚 Documentación oficial:** [https://github.com/hrbrmstr/waffle](https://github.com/hrbrmstr/waffle)
+
+```{r waffle-ejemplo}
+library(waffle)
+
+# Datos de proporciones
+datos_waffle <- c("Producto A" = 30, "Producto B" = 25, 
+                  "Producto C" = 20, "Producto D" = 25)
+
+waffle(datos_waffle, rows = 5, size = 0.5,
+       colors = c("#1f77b4", "#ff7f0e", "#2ca02c", "#d62728"),
+       title = "Distribución de ventas por producto",
+       xlab = "1 cuadrado = 1%")
+```
+
+::: {.callout-tip}
+## Tip de proporciones
+Asegurate de que tus datos sumen 100 o ajustá con `use_glyph = TRUE` para usar íconos en lugar de cuadrados. Para comparar múltiples períodos, usá `iron()` para crear gráficos waffle lado a lado.
+:::
+
+### treemapify
+Transforma datos jerárquicos en mapas de árbol rectangulares donde el tamaño representa valores numéricos. Excelente para mostrar proporciones y estructuras de datos complejas de forma intuitiva.
+
+**📚 Documentación oficial:** [https://github.com/wilkox/treemapify](https://github.com/wilkox/treemapify)
+
+```{r treemapify-ejemplo}
+library(treemapify)
+
+# Datos para treemap
+datos_treemap <- data.frame(
+  categoria = c("Tecnología", "Salud", "Finanzas", "Educación", "Entretenimiento"),
+  subcategoria = c("Software", "Farmacéutico", "Bancos", "Universidades", "Streaming"),
+  valor = c(45, 30, 25, 15, 35),
+  crecimiento = c(12, 8, 5, 3, 20)
+)
+
+ggplot(datos_treemap, aes(area = valor, fill = crecimiento, label = categoria)) +
+  geom_treemap() +
+  geom_treemap_text(colour = "white", place = "centre") +
+  scale_fill_gradient(low = "lightblue", high = "darkblue") +
+  labs(title = "Sectores económicos por valor y crecimiento",
+       fill = "% Crecimiento")
+```
+
+::: {.callout-tip}
+## Tip jerárquico
+Para datos con múltiples niveles, usá `geom_treemap_subgroup_border()` y `geom_treemap_subgroup_text()` para crear jerarquías visuales claras con bordes y etiquetas de subgrupos.
+:::
+
+## El mundo interactivo: gráficos que cobran vida
+
+### plotly
+El rey de la interactividad en R. Permite crear gráficos interactivos sofisticados o convertir cualquier gráfico de ggplot2 en interactivo con zoom, hover y filtros. Esencial para exploración de datos y presentaciones dinámicas.
+
+**📚 Documentación oficial:** [https://plotly.com/r/](https://plotly.com/r/)
+
+```{r plotly-ejemplo}
+library(plotly)
+
+# Crear gráfico base con ggplot2
+p_base <- ggplot(datos_ejemplo, aes(x = x, y = y, color = grupo, size = valor)) + 
+  geom_point(alpha = 0.7) + 
+  theme_minimal() +
+  labs(title = "Gráfico interactivo con plotly")
+
+# Convertir a interactivo
+ggplotly(p_base, tooltip = c("x", "y", "grupo", "valor"))
+```
+
+::: {.callout-tip}
+## Tip de interactividad
+Personalizá los tooltips con `tooltip = c("variable1", "variable2")` para mostrar solo la información relevante. Usá `config(displayModeBar = FALSE)` para ocultar la barra de herramientas en presentaciones.
+:::
+
+### Otros campeones de la interactividad
+
+### leaflet
+El estándar para mapas interactivos en R. Basado en la famosa librería JavaScript Leaflet, permite crear mapas web interactivos con marcadores, popups, capas y controles de navegación de forma intuitiva.
+
+**📚 Documentación oficial:** [https://rstudio.github.io/leaflet/](https://rstudio.github.io/leaflet/)
+
+```{r leaflet-ejemplo}
+library(leaflet)
+
+leaflet(ciudades_mx) %>% 
+  addTiles() %>% 
+  addCircleMarkers(
+    lng = ~lng, lat = ~lat,
+    radius = ~sqrt(poblacion/100000),
+    popup = ~paste(ciudad, "<br>Población:", scales::comma(poblacion)),
+    color = "red",
+    fillOpacity = 0.7
+  ) %>%
+  setView(lng = -102, lat = 23, zoom = 5)
+```
+
+::: {.callout-tip}
+## Tip de capas
+Usá `addLayersControl()` para permitir alternar entre diferentes tipos de mapas base. Combiná múltiples `addMarkers()`, `addPolygons()` y `addCircles()` para crear mapas ricos en información.
+:::
+
+### DT
+Transforma dataframes de R en tablas HTML interactivas elegantes con funcionalidades de búsqueda, filtrado, ordenamiento y paginación. Perfecto para explorar datos y crear reportes dinámicos.
+
+**📚 Documentación oficial:** [https://rstudio.github.io/DT/](https://rstudio.github.io/DT/)
+
+```{r dt-ejemplo}
+library(DT)
+
+datatable(datos_ejemplo, 
+          filter = 'top',
+          options = list(pageLength = 10, autoWidth = TRUE),
+          caption = "Tabla interactiva con funciones de búsqueda y filtrado")
+```
+
+::: {.callout-tip}
+## Tip de personalización
+Usá `formatCurrency()`, `formatPercentage()` y `formatRound()` para formatear columnas numéricas automáticamente. Agregá `extensions = 'Buttons'` para habilitar botones de descarga (CSV, Excel, PDF).
+:::
+
+### dygraphs
+Especializado en visualización interactiva de series de tiempo. Ofrece zoom, selección de rangos y múltiples series con una interfaz intuitiva y rendimiento optimizado para grandes volúmenes de datos temporales.
+
+**📚 Documentación oficial:** [https://rstudio.github.io/dygraphs/](https://rstudio.github.io/dygraphs/)
+
+```{r dygraphs-ejemplo}
+library(dygraphs)
+library(xts)
+
+# Convertir a formato xts para dygraphs
+serie_tiempo <- xts(datos_tiempo$valor, order.by = datos_tiempo$fecha)
+names(serie_tiempo) <- "Valor"
+
+dygraph(serie_tiempo, main = "Serie de tiempo interactiva") %>%
+  dyRangeSelector() %>%
+  dyHighlight(highlightCircleSize = 5, 
+              highlightSeriesBackgroundAlpha = 0.2) %>%
+  dyOptions(axisLineColor = "navy", gridLineColor = "lightblue")
+```
+
+::: {.callout-tip}
+## Tip temporal
+Usá `dyEvent()` para marcar fechas importantes en la serie y `dyShading()` para resaltar períodos específicos. Combiná múltiples series con `cbind()` en el objeto xts para comparaciones.
+:::
+
+## Estética que marca la diferencia
+
+### Temas que elevan tus gráficos
+
+### hrbrthemes
+Proporciona temas minimalistas y tipografía moderna para ggplot2, con fuentes como Roboto Condensed y Arial Narrow. Enfocado en la legibilidad y estética profesional para reportes y publicaciones.
+
+**📚 Documentación oficial:** [https://hrbrmstr.github.io/hrbrthemes/](https://hrbrmstr.github.io/hrbrthemes/)
+
+```{r hrbrthemes-ejemplo}
+# Nota: hrbrthemes requiere fuentes especiales, usaremos theme_minimal como alternativa
+library(ggplot2)
+
+ggplot(datos_ejemplo, aes(x = grupo, y = valor, fill = grupo)) + 
+  geom_violin(alpha = 0.7) +
+  geom_boxplot(width = 0.2, fill = "white", alpha = 0.8) +
+  theme_minimal(base_family = "Arial") +
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Distribución de valores por grupo",
+       subtitle = "Estilo minimalista con tipografía moderna",
+       x = "Grupo", y = "Valor") +
+  theme(legend.position = "none")
+```
+
+::: {.callout-tip}
+## Tip de fuentes
+Instalá fuentes del sistema con `extrafont::font_import()` antes de usar hrbrthemes. Si no tenés las fuentes, usá `theme_ipsum_rc()` que funciona con fuentes más comunes del sistema.
+:::
+
+### ggdark
+Ofrece temas oscuros elegantes para ggplot2, perfectos para presentaciones en pantalla o para quienes prefieren interfaces dark mode. Mantiene la legibilidad mientras reduce la fatiga visual.
+
+**📚 Documentación oficial:** [https://github.com/nsgrantham/ggdark](https://github.com/nsgrantham/ggdark)
+
+```{r ggdark-ejemplo}
+library(ggdark)
+
+ggplot(datos_ejemplo, aes(x = x, y = y, color = valor)) + 
+  geom_point(size = 3, alpha = 0.8) + 
+  dark_theme_gray() +
+  scale_color_gradient(low = "lightblue", high = "orange") +
+  labs(title = "Tema oscuro con ggdark",
+       subtitle = "Perfecto para presentaciones en pantalla")
+```
+
+::: {.callout-tip}
+## Tip de contraste
+Combiná `dark_theme_gray()` con colores brillantes como viridis o escalas personalizadas para mantener alta legibilidad. Evitá colores muy oscuros que se pierden en el fondo negro.
+:::
+
+### wesanderson
+Paletas de colores cuidadosamente seleccionadas inspiradas en las películas de Wes Anderson. Cada paleta captura la estética cinematográfica distintiva del director con combinaciones armoniosas y memorables.
+
+**📚 Documentación oficial:** [https://github.com/karthik/wesanderson](https://github.com/karthik/wesanderson)
+
+```{r wesanderson-ejemplo}
+library(wesanderson)
+
+ggplot(datos_ejemplo, aes(x = categoria, y = valor, fill = categoria)) + 
+  geom_boxplot() + 
+  scale_fill_manual(values = wes_palette("GrandBudapest1", n = 3)) +
+  theme_minimal() +
+  labs(title = "Paleta inspirada en The Grand Budapest Hotel",
+       subtitle = "Colores cinematográficos con wesanderson") +
+  theme(legend.position = "none")
+```
+
+::: {.callout-tip}
+## Tip cinematográfico
+Explorá todas las paletas con `names(wes_palettes)` y usá `wes_palette("NombrePaleta", n = X, type = "continuous")` para generar gradientes suaves entre los colores de la película.
+:::
+
+### Colores que comunican
+
+### viridis
+Proporciona paletas de colores perceptualmente uniformes y accesibles para personas con daltonismo. Desarrolladas científicamente para maximizar la discriminación de valores y mantener el contraste en escalas de grises.
+
+**📚 Documentación oficial:** [https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html)
+
+```{r viridis-ejemplo}
+library(viridis)
+
+# Crear matriz para heatmap
+matriz_ejemplo <- matrix(rnorm(100), nrow = 10)
+datos_heatmap <- expand.grid(x = 1:10, y = 1:10)
+datos_heatmap$valor <- as.vector(matriz_ejemplo)
+
+ggplot(datos_heatmap, aes(x = x, y = y, fill = valor)) + 
+  geom_tile() + 
+  scale_fill_viridis_c(option = "plasma") +
+  theme_minimal() +
+  labs(title = "Heatmap con paleta viridis",
+       subtitle = "Accesible y perceptualmente uniforme",
+       x = "X", y = "Y")
+```
+
+::: {.callout-tip}
+## Tip de accesibilidad
+Probá las diferentes opciones: "viridis", "magma", "plasma", "inferno", "cividis". Todas son accesibles para daltónicos y se ven bien en escala de grises.
+:::
+
+### RColorBrewer
+La referencia clásica para paletas de colores cartográficas diseñadas por Cynthia Brewer. Ofrece esquemas categóricos, secuenciales y divergentes respaldados por principios de percepción visual y cartografía.
+
+**📚 Documentación oficial:** [https://colorbrewer2.org/](https://colorbrewer2.org/)
+
+```{r rcolorbrewer-ejemplo}
+library(RColorBrewer)
+
+ggplot(datos_ejemplo, aes(x = grupo, fill = categoria)) + 
+  geom_bar(position = "dodge") + 
+  scale_fill_brewer(palette = "Set1") +
+  theme_minimal() +
+  labs(title = "Gráfico de barras con RColorBrewer",
+       subtitle = "Paleta Set1 para datos categóricos",
+       x = "Grupo", y = "Frecuencia")
+```
+
+::: {.callout-tip}
+## Tip de paletas
+Usá `display.brewer.all()` para ver todas las paletas disponibles. Para datos categóricos elegí "Set1", "Set2" o "Dark2". Para datos secuenciales probá "Blues", "Reds" o "Greens".
+:::
+
+## Visualizaciones especializadas para casos específicos
+
+### Mapas y datos geoespaciales
+
+### sf + ggplot2
+La combinación definitiva para datos geoespaciales modernos. sf (simple features) maneja geometrías espaciales de forma estándar, mientras ggplot2 los visualiza elegantemente. Reemplaza al antiguo sistema sp/maptools con mejor rendimiento.
+
+**📚 Documentación oficial:** [https://r-spatial.github.io/sf/](https://r-spatial.github.io/sf/)
+
+```{r sf-ejemplo}
+library(sf)
+library(ggplot2)
+
+# Crear un mapa simple de México usando datos incluidos en R
+# Usamos mapas incluidos en el paquete maps
+library(maps)
+mexico_map <- map_data("world", region = "Mexico")
+
+# Convertir a sf object
+mexico_coords <- mexico_map %>%
+  select(long, lat, group) %>%
+  group_by(group) %>%
+  do(geometry = st_polygon(list(as.matrix(.[c("long", "lat")])))) %>%
+  st_as_sf()
+
+# Crear datos de ejemplo para colorear regiones
+set.seed(123)
+mexico_coords$indice_desarrollo <- runif(nrow(mexico_coords), 0.6, 0.9)
+
+# Graficar con sf + ggplot2
+ggplot(mexico_coords) +
+  geom_sf(aes(fill = indice_desarrollo), color = "white", size = 0.2) +
+  scale_fill_gradient(low = "#ffe6e6", high = "#cc0000", 
+                      name = "Índice de\nDesarrollo") +
+  theme_void() +
+  labs(title = "Mapa de México con sf + ggplot2",
+       subtitle = "Ejemplo de visualización geoespacial moderna") +
+  theme(
+    plot.title = element_text(size = 14, hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5),
+    legend.position = "right"
+  )
+```
+
+::: {.callout-tip}
+## Tip geoespacial
+Para usar sf realmente, cargá shapefiles con `st_read("archivo.shp")` y visualizá con `geom_sf()`. Usá `coord_sf()` para proyecciones específicas y `theme_void()` para mapas limpios.
+:::
+
+### tmap
+Marco de trabajo especializado en mapas temáticos con sintaxis similar a ggplot2. Facilita la creación de mapas estáticos y interactivos con capas, leyendas y anotaciones de forma intuitiva.
+
+**📚 Documentación oficial:** [https://r-tmap.github.io/tmap/](https://r-tmap.github.io/tmap/)
+
+```{r tmap-ejemplo}
+library(tmap)
+library(sf)
+tmap_options(scale = 0.75)
+
+tm_shape(NLD_dist) +
+    tm_polygons(
+        fill = "edu_appl_sci",
+        fill.scale = tm_scale_continuous(values = "-orange_blue_diverging"),
+        fill.legend = tm_legend("", group_id = "top"),
+        col = NULL
+    ) + 
+tm_shape(NLD_muni) +
+    tm_borders(lwd = 1) +
+tm_shape(NLD_prov) +
+    tm_borders(lwd = 3) + 
+tm_title("Proportion of Population Aged 15–75 with a University or Applied Sciences Degree by District (as of October 1, 2022)", 
+    width = 10,
+    group_id = "top",
+    z = 0) +
+tm_compass(group_id = "bottom") +
+tm_scalebar(group_id = "bottom", breaks = c(0, 10, 50)) +
+tm_credits("© Data: Statistics Netherlands, Software: R-tmap", group_id = "bottom") +
+tm_comp_group("top", position = tm_pos_in("left", "top"), frame = FALSE, bg = FALSE) +
+tm_comp_group("bottom", position = tm_pos_in("left", "bottom", align.h = "left"))
+```
+
+::: {.callout-tip}
+## Tip temático
+Usá `tmap_mode("view")` para mapas interactivos y `tmap_mode("plot")` para estáticos. La sintaxis `tm_shape() + tm_polygons()` es muy similar a ggplot2.
+:::
+
+### Redes y conexiones
+
+### ggraph
+Extiende la gramática de ggplot2 para gráficos de redes y estructuras jerárquicas. Combina algoritmos de layout sofisticados con la flexibilidad estética de ggplot2 para crear visualizaciones de redes elegantes y personalizables.
+
+**📚 Documentación oficial:** [https://ggraph.data-imaginist.com/](https://ggraph.data-imaginist.com/)
+
+```{r ggraph-ejemplo}
+library(ggraph)
+library(tidygraph)
+
+# Creo base de amistades en el secundario
+graph <- as_tbl_graph(highschool) |> 
+    mutate(Popularity = centrality_degree(mode = 'in'))
+
+# Visualizo con ggraph
+ggraph(graph, layout = 'kk') + 
+    geom_edge_fan(aes(alpha = after_stat(index)), show.legend = FALSE) + 
+    geom_node_point(aes(size = Popularity)) + 
+    facet_edges(~year) + 
+    theme_graph(foreground = 'steelblue', fg_text_colour = 'white')
+```
+
+::: {.callout-tip}
+## Tip de redes
+Probá diferentes layouts: 'fr' (Fruchterman-Reingold), 'kk' (Kamada-Kawai), 'circle' para diferentes efectos visuales. Usá `geom_edge_link()` para conexiones simples y `geom_node_text()` para etiquetas.
+:::
+
+### networkD3
+Crea visualizaciones de redes interactivas usando D3.js desde R. Especializado en force-directed layouts, diagramas Sankey y gráficos de red con animaciones fluidas y interacciones intuitivas.
+
+**📚 Documentación oficial:** [https://christophergandrud.github.io/networkD3/](https://christophergandrud.github.io/networkD3/)
+
+```{r networkd3-ejemplo}
+library(networkD3)
+
+# Datos para diagrama Sankey
+nodos_sankey <- data.frame(name = c("Fuente A", "Fuente B", "Fuente C", 
+                                   "Proceso 1", "Proceso 2", 
+                                   "Resultado 1", "Resultado 2"))
+
+enlaces_sankey <- data.frame(
+  source = c(0, 1, 2, 0, 1, 3, 4, 3, 4),
+  target = c(3, 3, 4, 4, 4, 5, 5, 6, 6),
+  value = c(10, 15, 8, 5, 12, 8, 7, 12, 15)
+)
+
+sankeyNetwork(Links = enlaces_sankey, Nodes = nodos_sankey,
+              Source = "source", Target = "target", Value = "value",
+              NodeID = "name", units = "unidades", fontSize = 12)
+```
+
+::: {.callout-tip}
+## Tip interactivo
+Además de Sankey, probá `forceNetwork()` para redes force-directed y `radialNetwork()` para estructuras jerárquicas. Todos son interactivos por defecto.
+:::
+
+### Datos financieros
+
+### quantmod
+Herramientas especializadas para análisis cuantitativo financiero. Permite descargar datos de mercados financieros y crear gráficos tipo candlestick, OHLC y indicadores técnicos con funciones optimizadas para series temporales financieras.
+
+**📚 Documentación oficial:** [https://www.quantmod.com/](https://www.quantmod.com/)
+
+```{r quantmod-ejemplo}
+# Simulación de datos financieros (quantmod descarga datos reales)
+library(ggplot2)
+
+# Crear datos financieros simulados
+fechas <- seq(as.Date("2024-01-01"), by = "day", length.out = 100)
+precio_base <- 100
+datos_financieros <- data.frame(
+  fecha = fechas,
+  precio = cumsum(rnorm(100, 0, 2)) + precio_base,
+  volumen = sample(1000:5000, 100)
+)
+
+datos_financieros$precio_ma <- stats::filter(datos_financieros$precio, rep(1/7, 7), sides = 1)
+
+ggplot(datos_financieros, aes(x = fecha)) +
+  geom_line(aes(y = precio), color = "blue", size = 1) +
+  geom_line(aes(y = precio_ma), color = "red", size = 1, linetype = "dashed") +
+  theme_minimal() +
+  labs(title = "Precio de activo con media móvil (estilo quantmod)",
+       subtitle = "Línea azul: precio, línea roja: media móvil 7 días",
+       x = "Fecha", y = "Precio")
+```
+
+::: {.callout-tip}
+## Tip financiero
+Usá `getSymbols()` para descargar datos reales de Yahoo Finance, `chartSeries()` para gráficos candlestick automáticos, y `addTA()` para indicadores técnicos.
+:::
+
+## Gráficos que llaman la atención
+
+### Animaciones que cuentan historias
+
+### gganimate
+Añade la dimensión temporal a ggplot2 mediante animaciones fluidas. Permite crear transiciones entre estados de datos, revelar patrones temporales y contar historias visuales dinámicas con controles de timing precisos.
+
+**📚 Documentación oficial:** [https://gganimate.com/](https://gganimate.com/)
+
+```{r gganimate-ejemplo}
+library(gganimate)
+library(ggplot2)
+library(dplyr)
+
+# Datos para animación - evolución de ventas por trimestre
+datos_animacion <- data.frame(
+  trimestre = rep(1:8, each = 4),
+  producto = rep(c("Producto A", "Producto B", "Producto C", "Producto D"), 8),
+  ventas = c(
+    # T1
+    c(100, 80, 90, 70),
+    # T2  
+    c(110, 85, 95, 75),
+    # T3
+    c(105, 90, 100, 80),
+    # T4
+    c(120, 95, 105, 85),
+    # T5
+    c(115, 100, 110, 90),
+    # T6
+    c(125, 105, 115, 95),
+    # T7
+    c(130, 110, 120, 100),
+    # T8
+    c(135, 115, 125, 105)
+  )
+)
+
+# Crear la animación
+p_animado <- ggplot(datos_animacion, aes(x = producto, y = ventas, fill = producto)) +
+  geom_col(alpha = 0.8) +
+  scale_fill_viridis_d() +
+  theme_minimal() +
+  labs(title = "Evolución de ventas por trimestre: T{closest_state}",
+       subtitle = "Animación creada con gganimate",
+       x = "Producto", y = "Ventas (miles)",
+       fill = "Producto") +
+  theme(legend.position = "none",
+        plot.title = element_text(size = 16),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +
+  transition_states(trimestre,
+                   transition_length = 1,
+                   state_length = 2) +
+  ease_aes('sine-in-out')
+
+# Para mostrar en el documento, creamos frames estáticos
+datos_frames <- datos_animacion %>%
+  filter(trimestre %in% c(1, 4, 8))
+
+ggplot(datos_frames, aes(x = producto, y = ventas, fill = producto)) +
+  geom_col(alpha = 0.8) +
+  scale_fill_viridis_d() +
+  facet_wrap(~paste("Trimestre", trimestre), ncol = 3) +
+  theme_minimal() +
+  labs(title = "Frames de animación con gganimate",
+       subtitle = "En el código real, esto sería una animación fluida",
+       x = "Producto", y = "Ventas (miles)",
+       fill = "Producto") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Código para generar la animación real (comentado para el documento)
+# anim <- animate(p_animado, width = 800, height = 600, fps = 10, duration = 8)
+# anim_save("ventas_animacion.gif", anim)
+```
+
+::: {.callout-tip}
+## Tip de animación
+Usá `transition_time()` para datos temporales, `transition_states()` para categorías, y `ease_aes()` para suavizar. El código mostrado crea una animación real - descomentá las últimas líneas para generar el GIF.
+:::
+
+### Visualizaciones creativas
+
+### ggbump
+Especializado en gráficos de ranking que muestran cambios de posición a lo largo del tiempo. Ideal para visualizar competencias, evolución de rankings y cambios de jerarquía con líneas suaves y estéticamente agradables.
+
+**📚 Documentación oficial:** [https://github.com/davidsjoberg/ggbump](https://github.com/davidsjoberg/ggbump)
+
+```{r ggbump-ejemplo}
+# Simulación de datos de ranking
+library(ggplot2)
+
+datos_ranking <- expand.grid(
+  año = 2020:2024,
+  empresa = c("Empresa A", "Empresa B", "Empresa C", "Empresa D", "Empresa E")
+)
+set.seed(123)
+datos_ranking$ranking <- ave(datos_ranking$año, datos_ranking$año, 
+                            FUN = function(x) sample(1:5, length(x)))
+
+ggplot(datos_ranking, aes(x = año, y = ranking, color = empresa)) +
+  geom_line(size = 2, alpha = 0.8) +
+  geom_point(size = 4) +
+  scale_y_reverse(breaks = 1:5) +
+  scale_x_continuous(breaks = 2020:2024) +
+  theme_minimal() +
+  labs(title = "Evolución del ranking empresarial (estilo ggbump)",
+       subtitle = "Cambios de posición a lo largo del tiempo",
+       x = "Año", y = "Posición en ranking")
+```
+
+::: {.callout-tip}
+## Tip de ranking
+El paquete real ggbump usa `geom_bump()` que suaviza automáticamente las líneas. También tiene `geom_sigmoid()` para transiciones más elegantes entre puntos.
+:::
+
+### Gráficos de donut
+Una alternativa moderna y elegante a los gráficos de pie tradicionales. Los gráficos de donut permiten mostrar proporciones de manera más limpia y pueden incluir información adicional en el centro.
+
+**📚 Documentación oficial:** [Técnica con ggplot2](https://r-graph-gallery.com/doughnut-plot.html)
+
+```{r donut-ejemplo}
+library(ggplot2)
+library(dplyr)
+
+# Datos para el gráfico de donut
+datos_donut <- data.frame(
+  categoria = c("Marketing", "Ventas", "Desarrollo", "Soporte", "Administración"),
+  valor = c(25, 30, 20, 15, 10),
+  color = c("#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7")
+)
+
+# Calcular posiciones para las etiquetas
+datos_donut <- datos_donut %>%
+  arrange(desc(categoria)) %>%
+  mutate(
+    prop = valor / sum(valor),
+    ypos = cumsum(prop) - 0.5 * prop,
+    etiqueta = paste0(categoria, "\n", valor, "%")
+  )
+
+# Crear el gráfico de donut
+ggplot(datos_donut, aes(x = 2, y = valor, fill = categoria)) +
+  geom_col(color = "white", size = 1) +
+  coord_polar(theta = "y", start = 0) +
+  xlim(0.5, 2.5) +  # Esto crea el agujero en el centro
+  scale_fill_manual(values = datos_donut$color) +
+  theme_void() +
+  theme(legend.position = "right") +
+  labs(title = "Distribución del presupuesto por departamento",
+       subtitle = "Gráfico de donut elegante y moderno",
+       fill = "Departamento") +
+  # Agregar etiquetas
+  geom_text(aes(x = 2, y = ypos*100, label = paste0(valor, "%")), 
+            color = "white", fontface = "bold", size = 4) +
+  # Texto en el centro
+  annotate("text", x = 0.5, y = 0, label = "Presupuesto\n2024", 
+           size = 5, fontface = "bold", color = "gray30")
+```
+
+::: {.callout-tip}
+## Tip de donut
+Para crear variaciones, probá cambiar el valor de `xlim()` - valores más bajos hacen el agujero más grande. Podés agregar múltiples capas para crear donuts concéntricos comparando diferentes períodos.
+:::
+
+## ¿Cómo elegir el paquete correcto?
+
+Con tantas opciones, puede ser abrumador decidir qué usar. Acá te dejamos una guía práctica:
+
+**Para principiantes**: Empezá con extensiones de ggplot2 como ggthemes, patchwork y ggrepel. Son fáciles de usar y mejoran inmediatamente tus gráficos.
+
+**Para interactividad básica**: plotly es tu mejor amigo. Con `ggplotly()` podés hacer interactivo cualquier gráfico de ggplot2.
+
+**Para presentaciones profesionales**: Combiná hrbrthemes con paletas de viridis o wesanderson.
+
+**Para datos específicos**: 
+- Mapas → leaflet (interactivo) o sf + ggplot2 (estático)
+- Series de tiempo → dygraphs
+- Redes → ggraph o networkD3
+- Finanzas → quantmod
+
+**Para impresionar**: gganimate para contar historias con animación.
+
+## Instalación y primeros pasos
+
+La mayoría de estos paquetes están en CRAN, así que la instalación es sencilla:
+
+```{r instalacion}
+#| eval: false
+
+# Paquetes esenciales para empezar
+install.packages(c("plotly", "ggthemes", "patchwork", 
+                   "ggrepel", "viridis", "hrbrthemes"))
+
+# Para interactividad avanzada
+install.packages(c("leaflet", "DT", "dygraphs"))
+
+# Para visualizaciones especializadas
+install.packages(c("sf", "gganimate", "ggridges"))
+```
+
+## Consejos para no perderte en el ecosistema
+
+1. **No trates de aprender todo a la vez**: Elegí 2-3 paquetes que resuelvan tus necesidades inmediatas. Tratá de buscar recursos de inspiración, como los que compartimos en el [Capítulo I](https://estacion-r.com/blog/87ed9382-b6cf-4091-987e-79acf17b5c49/rstats%20viz%20visualizacion%20datos%20ggplot2%20dat)
+
+2. **Practicá con tus propios datos**: Los ejemplos cobran vida cuando trabajás con datos que conocés.
+
+3. **Explorá las viñetas**: Cada paquete tiene documentación excelente. Usá `vignette("nombre_paquete")` para acceder a ella y descubrir un sinfín de opciones.
+
+4. **Seguíle la pista a los creadores**: Muchos desarrolladores comparten tips increíbles en Twitter y blogs personales.
+
+5. **La comunidad es tu aliada**: #rstats en Twitter y comunidades como RStudio Community son minas de oro de ejemplos y ayuda. No dudes en acudir a ellos.
+
+## Reflexión final
+
+El ecosistema de visualización en R es vasto y emocionante. Cada paquete resuelve problemas específicos y añade capacidades únicas. Lo importante no es conocer todos los paquetes, sino saber que existen herramientas especializadas para casi cualquier tipo de visualización que imagines.
+
+En el próximo capítulo exploraremos referentes del área de la visualización de datos que trabajan con R bajo el brazo. ¡Estate atenta/o!
+
+<br>
+
+¿Qué paquete vas a probar primero? ¿Hay algún tipo de visualización específica que te gustaría dominar? El mundo de la visualización de datos en R está esperando a que lo explores. Dejanos tu comentario por redes o escribinos si estás interesada/o en hacer un gráfico en especial.
+
+---
+
+*¿Te gustó este artículo? Compartilo con alguien que esté empezando con visualización de datos en R. Y si te quedaron preguntas o sugerencias, nos encantaría escucharte.*

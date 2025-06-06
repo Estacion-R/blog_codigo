@@ -1,0 +1,269 @@
+---
+title: ¿La mejor selección Argentina de la historia?
+description: "Este artículo propone indagar en un método de puntuación que permite analizar selecciones de fútbol a lo largo de la historia: el puntaje Elo. Para ello nos valdremos de R para hacer scraping web, procesamiento de datos y visualizaciones"
+author: Juan Urricariet
+date: '2024-04-10'
+output: 
+  html_document:
+    self_contained: true
+slug: la-mejor-selecci-n-argentina-de-la-historia
+categories:
+  - analisis
+  - scrapping
+  - articulo
+  - futbol
+  - seleccion
+  - argentina
+tags:
+  - seleccion
+  - argentina
+  - futbol
+  - rstats
+  - analisis
+  - ggplot2
+  - lubridate
+  - rvest
+  - tidyverse
+  - dt
+  - ggtext
+toc: no
+images: ~
+---
+
+
+```{r echo=FALSE}
+#.......................Configuración .Rmd.......................
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, echo =T)
+```
+
+
+La pregunta que da título a este artículo, obviamente, no tiene una respuesta correcta. Las ponderaciones históricas, y más aún en el ámbito del fútbol, tienen un componente subjetivo importante. Muchas veces, la impronta generacional resulta decisiva: tenemos mayor cariño por equipos que nos deslumbraron en nuestra infancia o juventud y otros que simplemente no pudimos ver en tiempo real o los documentos fílmicos son escasos. Existieron equipos que llegaron más lejos de lo que su juego sugirió y otros que tuvieron grandes planteles pero que no culminaron con un trofeo.
+
+<center>
+
+![Selección del Mundial 2006](argentina_2006.jpg){width=60%}
+
+</center>
+
+<br>
+
+También hubo selecciones que basaron su juego en el funcionamiento colectivo y otros que destacaron por tener una estrella deslumbrante.
+
+<center>
+
+![Selección campeona Mundial 1986](argentina_1986.jpg){width=120%}
+
+</center>
+
+<br>
+
+Estas y muchas otras variables influyen en nuestra elección personal. En esta oportunidad, queremos hacer uso de un sistema que no es el dueño de la verdad, pero puede ser de utilidad para acompañar nuestras percepciones con algún sustento en los datos. Y para practicar R.
+
+## ¿Qué es el sistema Elo?
+
+El nombre proviene de su inventor, Árpád Élő, quien ideó un sistema de puntuación para la clasificación de jugadores de ajedrez, adoptada luego por la Federación Internacional de Ajedrez (FIDE). El método puede ser aplicado para cualquier competencia que enfrente equipos o jugadores entre sí. Consiste en otorgar un puntaje a cada participante relacionado con el rival que enfrenta, y se actualiza en cada partido o competencia. La [fórmula matemática que lo calcula](https://www.eloratings.net/about) tiene en cuenta la diferencia de puntaje entre ambos competidores. En términos futbolísticos, obtener un triunfo frente a Brasil otorgará un mayor puntaje -o disminuirá menos, en caso de perder- que uno ante Islas Feroe. Además, en el caso del fútbol se agrega una ponderación de acuerdo a la localía -vale más ganar de visitante- y a la competición en que se enmarca el encuentro -vencer en la final de la Copa del Mundo otorga más puntaje que hacerlo en un amistoso-. Actualmente la FIFA utiliza este sistema para sus clasificaciones oficiales [masculina](https://inside.fifa.com/es/fifa-world-ranking/men) y [femenina](https://inside.fifa.com/es/fifa-world-ranking/women).
+
+## Obtención de los datos
+
+Para jugar un poco con los datos vamos a presentar un breve código que extrae los puntajes de todos los países de la página web https://www.international-football.net/elo-ratings-table. Los datos comienzan en 1873, tiempos en los que solo se registran enfrentamientos en el clásico británico Inglaterra-Escocia.[^nota_FIFA]
+
+[^nota_FIFA]: Es posible extraer, con un código muy similar, los datos de la web de la FIFA, pero estos inician recién en 1993.
+
+La idea detrás del código para obtener los datos es hacer una serie de consultas a la página donde se publican los puntajes, de manera que vaya devolviendo los resultados para cada fecha que se elija.
+Proponemos que se consulte por el primer día de cada mes entre 1873 y la fecha actual. Si bien podría hacerse para todos los días, el tiempo que demoraría sería excesivo, por lo que para ahorrar tiempo -este proceso demora unos 50 minutos- vamos a extraer solo una tabla por mes.
+
+```{r}
+# Librerías utilizadas
+library(rvest) # Paquete para implementar scraping web
+library(lubridate) # Paquete para datos con formato fecha
+library(tictoc) # Paquete para ver cuánto demoran los procesos
+library(tidyverse)
+library(ggtext) # Paquete para darle formato al texto
+```
+
+
+```{r eval=F}
+# Fechas que se van a consultar: desde 1873 a 2024, el 1 de cada mes
+fechas <- seq.Date(from = as.Date("1873-01-01"),
+                   to = Sys.Date(),
+                   by = "month")
+
+# Lista para guardar las tablas según fecha
+tabla_ratings <- list() 
+
+tic() # Con esta función comenzamos a tomar el tiempo que tomará el procesamiento, hasta que se ejecute la función toc()
+
+# Consulta: Con un for loop, se recorre la tabla de puntajes para cada fecha
+for (i in 1:length(fechas)){
+  link <- glue::glue("https://www.international-football.net/elo-ratings-table?year={year(fechas[i])}&month={month(fechas[i])}&day={day(fechas[i])}")
+  elo_page <- read_html(link) # Lectura de la parte HTML estática de la web
+  
+  # Extracción de los elementos de texto de la web
+  summaries_css <- elo_page %>%
+    html_elements("td")
+  
+  elo_summaries <- html_text(summaries_css)
+  
+  # Manipulación de cada tabla para tener un resultado limpio
+  rating <- as.data.frame(elo_summaries) %>% # Convierto a data frame
+    rename(v1 = elo_summaries) %>% # Cambio de nombre a la variable
+    filter(v1 != "") %>% # Saco filas vacías
+    slice(-c(1:2)) # Excluyo las primeras 2 filas
+  
+  # La tabla que devuelve contiene el nombre de país y su puntaje en filas consecutivas
+  row_odd <- seq_len(nrow(rating)) %% 2  # Selecciono las filas que son impares
+  
+  # Armo la tabla: las filas impares son el país y las pares el puntaje. Añado la columna fecha
+  tabla_ratings[[i]] <- data.frame(pais = rating[row_odd == 1, ],
+                                   elo =  rating[row_odd == 0, ],
+                                   fecha = fechas[i])
+  print(fechas[i])
+}
+
+toc() # Termina el conteo de tiempo que tomó el proceso
+
+# Unifico todas las tablas en 1
+tabla <- do.call(bind_rows, 
+                 tabla_ratings)
+
+# Guardo en formato .rds:
+write_rds(tabla, 
+          glue::glue("data/elo_ranks_{fechas[1]}_{fechas[length(fechas)]}.rds"))
+```
+
+
+De esta manera tenemos, en una única tabla, los puntajes Elo de las selecciones nacionales entre 1873 y 2024.
+Veamos cómo está el ranking actualmente
+
+```{r}
+# Lectura de la tabla en formato rds
+elo <- read_rds("elo_ranks_1873-01-01_2024-04-01.rds") %>% 
+  mutate(elo = as.numeric(elo), 
+         pais = ifelse(pais == "Falkland Islands", 
+                       yes = "Islas Malvinas",
+                       no = pais))
+
+# Mostramos la tabla de forma interactiva, con la función datatable del paquete {DT}
+elo %>% filter(fecha == max(fecha)) %>% # Seleccionamos los registros de la última fecha
+  arrange(-elo) %>% # Ordenamos valores de forma decreciente
+  select(-fecha) %>% # Sacamos la variable fecha
+  DT::datatable(caption = glue::glue("Ranking Elo al {format(max(elo$fecha),'%d de %B de %Y')}")) # Tabla y título
+```
+
+La selección campeona en Qatar 2022 ocupa la primera posición, como era de esperar. También era de esperar la segunda posición. En el resto de la tabla pueden surgir algunas sorpresas, países que no creíamos que estuvieran tan bien rankeados -tal vez por tener presente su performance únicamente en el último mundial y no los enfrentamientos en otras competencias-. Adentrándonos en las profundidades de la tabla podemos detectar algunos territorios pintorescos, como el territorio dependiente de Estados Unidos Samoa Americana, la República de Palaos o las Islas Marianas del Pacífico. Selecciones con las que se podría fantasear arrancarles una victoria con nuestro equipo de amigos.
+
+
+## Argentina en el tiempo
+
+Si nos enfocamos en la selección Argentina, podemos seguir su derrotero desde el año 1902. Los picos cuando se obtuvieron las 3 Copas Mundiales son elocuentes. Llama la atención la clasificación durante las décadas de 1940 y 1950, tiempos en los cuales la selección albiceleste tenía grandes participaciones en los Campeonatos Sudamericanos (actual Copa América). En 1957, por ejemplo, [la Argentina obtiene el torneo continental con grandes goleadas (4-0 a Uruguay, 3-0 a Brasil) de la mano de la delantera de _Los Carasucias_](https://es.wikipedia.org/wiki/Campeonato_Sudamericano_1957).
+
+<center>
+
+![Selección 1957](carasucias.webp){width=70%}
+
+</center>
+
+<br>
+
+El puntaje más bajo de la serie corresponde a abril de 1990: el entonces campéon del mundo no hacía pie en la preparación para el mundial de ese año, que culminaría en un subcampeonato.
+
+```{r fig.align='center'}
+# Graficamos la serie de Argentina
+elo %>% 
+  filter(pais == "Argentina") %>% 
+  ggplot(aes(x=fecha,
+             y=elo))+
+  geom_point(data = elo %>% 
+               filter(pais == "Argentina" & fecha %in% as.Date(c("1978-08-01","1986-08-01","2023-01-01"))),
+             color="gold",
+             size=10)+
+  geom_line(color = "#75aadb")+
+  theme_minimal()+
+  labs(x = "",
+       y = "",
+       title = "Puntaje Elo de Argentina",
+       subtitle = "")
+```
+
+Los datos del puntaje Elo permiten dar una respuesta a nuestra pregunta incial: el mayor nivel alcanzado por la selección Argentina coincide con la obtención de la última Copa del Mundo. Muchas personas, estimamos, compartirán esta apreciación.
+
+<center>
+
+![Selección campeona Mundial 2022](argentina_campeon_22.webp){width=70%}
+
+</center>
+
+## Mano a mano
+
+El puntaje Elo nos permite hacer un seguimiento en el tiempo de algunos duelos históricos de selecciones. La memoria reciente de los mundiales no es grata a la hora de recordar los enfrentamientos argentinos con Alemania. En el siglo XXI el país europeo eliminó tres veces seguidas a Argentina (en 2006, 2010 y la final de 2014). A falta de enfrentamientos más recientes podemos hacer uso de las estadísticas que nos provee nuestro amigo Elo. En la actualidad, la diferencia de puntuación a favor de Argentina (esto es el puntaje Elo de Argentina menos el de Alemania) es la mayor desde hace más de 80 años.
+
+```{r}
+# Armamos una tabla con los resultados de Argentina y Alemania
+elo_arg_germany <- elo %>% 
+  filter(pais %in% c("Argentina", "Germany", "West Germany")) %>% 
+  pivot_wider(names_from = "pais",
+              values_from = "elo") %>% 
+  mutate(Germany = ifelse(is.na(Germany), 
+                          yes = `West Germany`, 
+                          no = Germany)) %>% 
+  mutate(dif = Argentina - Germany) %>% # Diferencia de puntajes
+  pivot_longer(cols = c("Argentina", "Germany", "dif"),
+               names_to = "var",
+               values_to = "val") %>% 
+  mutate(var_tipo = ifelse(var == "dif",
+                           yes= "dif",
+                           no = "elo"), 
+         var_tipo = factor(var_tipo,levels = c("elo", "dif"),
+                           labels = c("elo","dif"))) # Convertimos a formato factor
+```
+
+```{r fig.align='center'}
+# Graficamos la evolución de las series de Argentina y Alemania, junto con la diferencia
+ggplot(data = elo_arg_germany,
+       aes(x = fecha,
+           y = val)) + 
+  geom_line(aes(color = var),
+            data = elo_arg_germany %>% 
+              filter(var_tipo == "elo"))+ # Líneas de ambas series
+  geom_col(data = elo_arg_germany %>% 
+             filter(var_tipo == "dif"),
+           fill = "gold")+ # Columnas con la diferencia entre ambas
+  facet_grid(facets = "var_tipo",
+             scales = "free_y")+
+  scale_color_manual(values = c("#75aadb", "#DD0000"),
+                     name="")+
+  theme(
+    text = element_text(family = "Encode Sans"), 
+    plot.title =  element_markdown(size = 14, face = "bold"),
+    plot.subtitle = element_markdown(size = 12, face = "bold"),
+    plot.caption  = element_markdown(size = 10),
+    strip.text.y  = element_text(size = 8, face = "bold"),
+    axis.text.x   = element_text(size = 6, angle = 90),
+    axis.text.y   = element_text(size = 6),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.major.x = element_blank(),
+    legend.position = "none",
+    strip.placement = "outside",
+    legend.title = element_blank())+
+  theme_minimal()+
+  labs(x = "",
+       y = "",
+       title = "Puntaje Elo de Argentina y Alemania y diferencia entre ambos",
+       subtitle = "Aplica Alemania Occidental durante la división")
+```
+
+
+
+## Conociendo al autor **[Juan Urricariet]**
+
+_Soy un economista apasionado por la ciencia de datos. Tengo experiencia en el ámbito de las estadísticas oficiales y en el análisis económico, donde implementé herramientas de programación (R principalemente) para la gran parte de las tareas de trabajo._
+
+![Juan Urricariet](foto_juan.jpeg){width=30%}
+
+Pueden conocer su trabajo y contactarse por:
+
+**Github**: https://github.com/jurricariet
+
+📬: juanurricariet@gmail.com
+
+

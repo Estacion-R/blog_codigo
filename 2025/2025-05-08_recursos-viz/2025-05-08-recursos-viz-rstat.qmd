@@ -1,0 +1,71 @@
+---
+title: Recursos Indispensables para Visualizar Datos con R - Capítulo I
+author: Estación R
+date: '2025-05-08'
+description: Capítulo I de una serie de artículos sobre recursos para ayudar a tu inspiración y mejorar tus habilidades de visualización con R
+slug: 2025-05-08-recursos-viz-rstat-cap_1
+format:
+  html:
+    embed-resources: true
+---
+
+```{r echo=FALSE, fig.align='center', out.width = "700px"}
+#knitr::include_graphics("img/Logo_PNG_Alta_Mesa de trabajo 1.png")
+```
+
+## Introducción
+
+Si estás dando tus primeros pasos en [R](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://www.r-project.org/&ved=2ahUKEwi4s_qwz5KNAxWzEEQIHYn1NEsQFnoECAkQAQ&usg=AOvVaw1dEKAtw6XqNnWPRNby8Tne), es probable que ya hayas oído hablar de la importancia de la **visualización de datos**. Representar información de manera gráfica no solo permite comunicar mejor, sino que también ayuda a descubrir patrones, validar hipótesis y tomar decisiones basadas en evidencia.
+
+Pero, ¿es R un buen lenguaje para hacer gráficos? La respuesta es un rotundo **sí**. R nació como un lenguaje estadístico, y desde sus inicios ha puesto un fuerte foco en la visualización. De hecho, incluso las versiones más antiguas del lenguaje ya incluían funciones básicas para graficar. Con el tiempo, y gracias a la comunidad, se desarrollaron herramientas como `ggplot2` que revolucionaron la forma de crear gráficos, permitiendo controlar cada detalle de manera declarativa, estructurada y con alta calidad visual.
+
+Hoy en día, R es una de las herramientas preferidas para la visualización de datos en el ámbito académico, científico y profesional como así también en el sector privado. Su ecosistema permite generar desde gráficos simples hasta visualizaciones interactivas, mapas dinámicos y dashboards web.
+
+En este artículo, te compartimos recursos útiles para inspirarte, mejorar tus visualizaciones y conocer herramientas que pueden acompañarte en este camino.
+
+
+## No es R pero qué útil es
+
+En la siguiente sección hemos decidido comenzar por compartir recursos que te faciliten tanto el proceso de inspiración al momento de pensar una visualización como el de implementación. En este sentido, hay herramientas que no son R pero que pueden ser de gran ayuda a la hora de pensar y crear visualizaciones.
+
+Vamos por ellas:
+
+👉🏻 [Data to Viz](https://www.data-to-viz.com/) es una herramienta que te permite elegir el tipo de gráfico que mejor se adapta a tus datos. Solo tenés que responder algunas preguntas sobre la naturaleza de tus datos y la historia que querés contar, y la herramienta te sugerirá el gráfico más adecuado. Además, incluye ejemplos de código en R (¡y no sólo de R!) para implementar la visualización elegida.
+Esta es nuestra preferida y de las más completas. Te recomendamos que la guardes en tus favoritos y la uses cada vez que necesites inspiración para una visualización.
+
+![from-data-to-viz](img/data-to-viz.png){width=300}
+
+<br>
+
+👉🏻 [ColorBrewer:](https://colorbrewer2.org/) ColorBrewer es una herramienta que te ayuda a elegir paletas de colores adecuadas para tus gráficos. Te permite seleccionar paletas secuenciales, divergentes o cualitativas, y te muestra cómo se ven en diferentes formatos. Además, incluye recomendaciones sobre la accesibilidad de los colores elegidos. 
+
+![ColorBrewer website](img/color-brewer.png){width=500}
+
+<br>
+
+👉🏻 [Radiografía del `theme`:](https://henrywang.nl/ggplot2-theme-elements-demonstration/) Una de las grandes fortalezas de `ggplot2` es su sistema de temas, que permite personalizar cada aspecto visual del gráfico. Pero si estás empezando, puede resultar confuso recordar el nombre exacto de cada elemento que querés modificar. ¿Cómo se llama la opción para editar el texto del eje? ¿Y el fondo de la leyenda? ¿Dónde se cambia el margen del gráfico?
+
+Para resolver ese problema, [Henry Wang](https://henrywang.nl/) desarrolló esta herramienta visual: **ggplot2 Theme Elements Demonstration**. Esta es una guía interactiva que muestra, de forma clara y visual, cómo se llama cada parte del gráfico dentro del sistema `theme()` y cómo afecta al diseño general.
+
+![ggplot2 Theme Elements Demonstration](img/themes.png){width=500}
+
+<br>
+
+
+👉🏻 [Galería de extensiones para `ggplot2`:](https://exts.ggplot2.tidyverse.org/gallery/) una colección oficial mantenida por el equipo de `ggplot2` que muestra cómo distintos paquetes amplían las funcionalidades del sistema gráfico más popular de R. Cada extensión permite incorporar nuevos tipos de geometrías, efectos visuales, layouts o herramientas interactivas dentro del mismo marco de trabajo. Explorar esta galería es una gran manera de descubrir soluciones creativas, nuevos paquetes y posibilidades que van mucho más allá de los gráficos convencionales.
+
+![ggplot2 extension](img/ggplot-extension.png){width=500}
+
+<br>
+
+La visualización es un campo vivo dentro del mundo R. Combina creatividad, precisión técnica y sentido estético. No se trata solo de "hacer un gráfico", sino de contar una historia, un hallazgo con datos, de forma clara, atractiva y comprensible.
+
+Explorar estos recursos, seguir a quienes marcan el camino y animarte a probar nuevas herramientas puede transformar la forma en la que trabajás con datos. Si estás arrancando en R, recordá: cada gráfico que hacés es una oportunidad para aprender algo nuevo.
+
+El el siguiente capítulo compartiremos una serie de paquetes de R para visualizar datos. Algunos de ellos son muy conocidos y otros no tanto, pero todos tienen algo en común: son herramientas poderosas que pueden ayudarte a crear visualizaciones impactantes y efectivas.
+
+¡Hasta la próxima!
+
+[^1]: Este artículo fue escrito por [Estación R](https://estacionr.com/) y forma parte de una serie de artículos sobre recursos para ayudar a tu inspiración y mejorar tus habilidades de visualización con R. 
+
+![Estación R](img/logo-estacionr.png){width=500}
