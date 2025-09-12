@@ -7,13 +7,13 @@ slug: 2025-05-08-recursos-viz-rstat-cap_2
 format:
   html:
     embed-resources: true
-    toc: true
+    toc: false
     toc-depth: 3
     code-fold: false
     code-tools: true
-    theme: 
-      - cosmo
-      - custom.scss
+    # theme: 
+    #   - cosmo
+    #   - custom.scss
     mainfont: Ubuntu
     fontsize: 16px
     linestretch: 1.6
@@ -22,95 +22,6 @@ execute:
   message: false
 ---
 
-```{css}
-/*| echo: false */
-
-/* Estilo personalizado para Estación R */
-@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
-
-:root {
-  --estacion-primary: #2E86AB;
-  --estacion-secondary: #A23B72;
-  --estacion-accent: #F18F01;
-  --estacion-success: #C73E1D;
-  --estacion-dark: #1B263B;
-  --estacion-light: #F8F9FA;
-  --estacion-code: #E9ECEF;
-}
-
-body {
-  font-family: 'Ubuntu', sans-serif;
-  color: var(--estacion-dark);
-  line-height: 1.6;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Ubuntu', sans-serif;
-  font-weight: 500;
-  color: var(--estacion-primary);
-}
-
-h1 {
-  border-bottom: 3px solid var(--estacion-accent);
-  padding-bottom: 0.5rem;
-}
-
-h2 {
-  border-left: 4px solid var(--estacion-secondary);
-  padding-left: 1rem;
-  margin-top: 2rem;
-}
-
-h3 {
-  color: var(--estacion-secondary);
-  font-weight: 500;
-}
-
-.callout-tip {
-  border-left: 4px solid var(--estacion-accent);
-  background-color: rgba(241, 143, 1, 0.1);
-}
-
-.callout-tip .callout-title {
-  color: var(--estacion-accent);
-  font-weight: 600;
-}
-
-code {
-  background-color: var(--estacion-code);
-  color: var(--estacion-dark);
-  padding: 0.2rem 0.4rem;
-  border-radius: 0.25rem;
-}
-
-pre {
-  background-color: var(--estacion-code);
-  border: 1px solid #DEE2E6;
-  border-radius: 0.5rem;
-}
-
-a {
-  color: var(--estacion-primary);
-  text-decoration: none;
-}
-
-a:hover {
-  color: var(--estacion-secondary);
-  text-decoration: underline;
-}
-
-.quarto-title-banner {
-  background: linear-gradient(135deg, var(--estacion-primary) 0%, var(--estacion-secondary) 100%);
-  color: white;
-}
-
-blockquote {
-  border-left: 4px solid var(--estacion-accent);
-  background-color: rgba(241, 143, 1, 0.05);
-  padding: 1rem;
-  margin: 1rem 0;
-}
-```
 
 ## Introducción
 
