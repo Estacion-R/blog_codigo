@@ -1,0 +1,156 @@
+---
+title: "10 Cosas que se pueden hacer con R"
+subtitle: "Capítulo: Importar datos"
+author: "Estación R"
+date: "2025-09-xx"
+description: "En este capítulo vamos a explorar la capacidad que tiene R para lidiar con la importación de datos desde múltiples fuentes y formatos. Sea de un archivo de Excel, una base de datos SQL o una API web, R tiene herramientas poderosas para facilitar este proceso."
+slug: "2025-09-xx-10_cosas_r-01_importar_datos"
+format:
+  html:
+    embed-resources: true
+    toc: false
+    toc-depth: 3
+    code-fold: false
+    code-tools: true
+    # theme: 
+    #   - cosmo
+    #   - custom.scss
+    mainfont: "Ubuntu"
+    fontsize: "16px"
+    linestretch: 1.6
+execute:
+  warning: false
+  message: false
+---
+
+
+## Introducción
+
+R es un lenguaje de programación y entorno de software libre para análisis estadístico y visualización de datos. Desde su creación en los años 90, R ha evolucionado hasta convertirse en una herramienta esencial para científicos de datos, estadísticos y analistas en todo el mundo. Su capacidad para manejar grandes volúmenes de datos, realizar análisis complejos y crear visualizaciones impactantes lo hace ideal para una amplia gama de aplicaciones, desde la investigación académica hasta el análisis empresarial.
+
+En esta serie de capítulos, exploraremos 10 cosas que se pueden hacer con R, destacando sus características más poderosas y versátiles. Cada capítulo se centrará en un aspecto específico del uso de R, proporcionando ejemplos prácticos y recursos útiles para que los lectores puedan aprovechar al máximo esta herramienta.
+
+La idea es que puedas descubrir el potencial de R y cómo puede ayudarte a resolver problemas del mundo real, mejorar tus habilidades analíticas y crear visualizaciones que comuniquen tus hallazgos de manera efectiva. Todo sin importar de dónde partas, ya seas un principiante o un usuario avanzado. Sea que tengas antecedentes en la programación o no, R tiene algo que ofrecerte.
+
+
+## Importación de datos
+
+Comencemos por lo más básico: ¿qué es la importación de datos? En términos simples, es el proceso de traer datos desde una fuente externa a R para su análisis. Esta fuente puede ser un archivo en tu computadora, una base de datos en línea o incluso una API web. R tiene una variedad de paquetes y funciones que facilitan la importación de datos desde diferentes formatos y fuentes. 
+Con traer nos referimos a que los datos de ese archivo estén disponibles en la sesión de tu plataforma de trabajo con R (RStudio, Positron, VScode, etc.).
+
+
+## Importar datos desde archivos locales (en tu computadora)
+
+El caso típico de un trabajo con datos es que estos se encuentren en un archivo. Lo importante, para R, es el formato de ese archivo, también conocido como _extensión_. De forma ilustrativa, la _extensión_ es la parte del nombre del archivo que viene después del punto. Por ejemplo, en el archivo `datos.csv`, la extensión es `.csv`.
+
+Existen infinidad de formatos de archivo, los más comunes son:
+
+- CSV (`.csv`): Comma-Separated Values, un formato de texto plano donde los valores están separados por comas.
+
+- Excel (`.xlsx`, `.xls`): Formato de archivo utilizado por Microsoft Excel para hojas de cálculo.
+
+- TXT (`.txt`): Archivo de texto plano que puede contener datos en diferentes formatos, como tabulados o separados por espacios.
+
+- SAV (`.sav`): Formato de archivo utilizado por SPSS para almacenar datos estadísticos.
+
+- DTA (`.dta`): Formato de archivo utilizado por Stata para almacenar datos estadísticos.
+
+- JSON (`.json`): JavaScript Object Notation, un formato de texto ligero para el intercambio de datos.
+
+... y muchos más.
+
+### R en acción.
+
+En R hay una función para cada extensión de archivo. Una pista para entender qué función sirve a qué extensión es que muchas veces el nombre de la función contiene el nombre del formato del archivo al final. Por ejemplo, para importar un archivo CSV, usamos la función `read.csv()`, y para un archivo de texto plano, usamos `read.table()`.
+
+Ahora bien, hay funciones que las tenemos incorporadas en R base (es decir, que vienen con la instalación de R) y otras que vienen en paquetes adicionales. Por ejemplo, `read.csv()` es parte de R base, mientras que `read_excel()` viene en el paquete `readxl`, que es parte de paquete de paquetes _tidyverse_.
+
+::: {.callout-warning collapse=true}
+
+## Múltiples funciones para una misma extensión
+Habrás notado que en internet hay código dando vueltas para importar archivos `.csv` con la función `read.csv()` y a veces con la función `read_csv()`. La principal diferencia es que la primera es la función de R base y la segunda es del paquete `readr`, del mundo `tidyverse`.
+
+Te recomendamos leer la documentación para entender mejor los parámetros con los que trabajan ambas y así evaluar cuál te conviene utilizar según tu caso de uso
+:::
+
+R en este sentido ha crecido tanto que practicamente existe una función para cada formato de archivo. A continuación, te mostramos una tabla con algunas de las funciones más comunes para importar datos desde archivos locales en R:
+
+| Formato de archivo | Extensión | Paquete       | Función             |
+|--------------------|-----------|---------------|---------------------|
+| CSV                | .csv      | R base        | `read.csv()`       |
+| CSV                | .csv      | readr         | `read_csv()`       |
+| Excel              | .xlsx, .xls| readxl        | `read_excel()`     |
+| Texto plano        | .txt      | R base        | `read.table()`     |
+| SPSS               | .sav      | haven         | `read_sav()`       |
+| Stata              | .dta      | haven         | `read_dta()`       |
+| JSON               | .json     | jsonlite      | `fromJSON()`       |
+| Parquet            | .parquet  | arrow         | `read_parquet()`   |
+| Feather            | .feather  | arrow         | `read_feather()`   |
+| RDS                | .rds      | R base        | `readRDS()`        |
+| RData              | .RData    | R base        | `load()`           |
+
+
+### Manos a la obra
+
+Basta de charla. Vamos a ver algunos ejemplos sobre cómo importar datos desde diferentes formatos de archivo utilizando R:
+
+#### .CSV
+
+```{r}
+#| eval: false
+#| echo: true
+# Al ser una función de R base, no cargamos ninguna librería
+datos_csv <- read.csv("ruta/al/archivo/datos.csv")
+```
+
+#### .SAV (SPSS)
+
+```{r}
+#| eval: false
+#| echo: true
+# Instalamos la librería {haven}
+# install.packages("haven")
+
+# Cargamos la librería 
+library(haven)
+datos_sav <- read_sav("ruta/al/archivo/datos.sav")
+```
+
+::: {.callout-tip collapse=true}
+## TIP 1
+Al momento de importar un archivo, tené en cuenta:
+
+1. Corroborar la extensión del archivo.
+2. Que coincida con el nombre de la función.
+3. El texto con la ruta que le damos a la función **siempre** tiene que tener, al final, la extensión del archivo expresada. 
+
+Ejemplo: `"carpeta_1/carpeta_2/nombre_del_archivo.extension"`
+:::
+
+::: {.callout-tip collapse=true}
+## TIP 2
+Siempre revisá la documentación de las funciones para entender bien los parámetros que ofrecen. Estos suelen resolver una amplia variedad de dolores de cabeza.
+:::
+
+
+## Importar datos desde internet (spoiler: necesitás internet)
+
+::: {.columns}
+
+::: {.column width = "60%"}
+Una de las magias que vas a encontrar en R es que las funciones que vimos para importar datos de forma local, también van a responder si queremos traer datos que están en internet sin tener que descargarlos a nuestra computadora.
+:::
+
+::: {.column width = "40%"}
+::: {.text-center}
+![](https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExYno1Z2l3cG1qMXFnYWkwb3hucmJqdTU3ZGtqYnBlNm5iajRmbnY1cSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/V0IdVIIW1y5d6/giphy.gif){width="30%"}
+:::
+:::
+:::
+
+
+¿Pero, cómo es posible? En pocas palabras, lo indispensable que pide una función para importar un archivo es __la ruta del archivo__. Y, sea en tu computadora o en internet, todos los archivos "viven" en algún lado, sólo tenemos que conocer esa ruta. 
+
+### Descargando datos oficiales de la página oficial
+
+Supongamos que estoy trabajando en un proyecto en el que necesito crear un informe sobre la situación del mercado de trabajo en Argentina 🇦🇷.

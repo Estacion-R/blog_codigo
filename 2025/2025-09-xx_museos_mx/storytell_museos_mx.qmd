@@ -1,0 +1,38 @@
+---
+title: Museos en México
+format: closeread-html
+---
+
+```{r}
+source("procesamiento.R")
+```
+
+Estadísticas de museos en México.
+
+:::{.cr-section}
+
+México es conocido por su diversidad cultural. @cr-stats
+
+:::{#cr-stats}
+```{r}
+nrow(df_museos_mx)
+```
+:::
+
+Draw your readers attention with focus effects. @cr-features
+
+:::{#cr-features}
+1. Highlighting
+2. Zooming
+3. Panning
+:::
+
+When this paragraph scrolls into view it will reveal a histogram. @cr-myplot
+
+:::{#cr-myplot}
+```{r}
+hist(rnorm(15))
+```
+:::
+
+:::

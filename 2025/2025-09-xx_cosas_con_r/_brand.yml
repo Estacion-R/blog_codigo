@@ -1,0 +1,16 @@
+# _brand.yml - Configuración de Marca Estación R (Solo propiedades válidas)
+
+# Configuración de color básica
+color:
+  primary: "#007acc"
+  secondary: "#6c757d"
+
+# Configuración de tipografía básica
+typography:
+  # Fuente base
+  base:
+    family: "Ubuntu"
+  
+  # Fuente monoespaciada  
+  monospace:
+    family: "Ubuntu Mono"
